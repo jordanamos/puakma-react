@@ -1,0 +1,59 @@
+# Builds the React bundle and pushes it to the Puakma app with vortex-cli, by running the
+# same `npm run deploy` you run locally. Reusable unchanged in any repo.
+#
+# Where things are configured (once, by the repo owner):
+#   package.json  "puakma": { "server": "...", "app": "group/app" }   which app, which server section
+#   ci-cd/config/servers.ini                                          the server definitions (no credentials)
+#   pipeline variables (Edit > Variables):
+#     vortexUsername, vortexPassword   secrets, required
+#     serverName, appGroup, appName    optional overrides of package.json, e.g. to deploy the
+#                                      same repo to another server from a second pipeline
+# YAML-defined variables cannot be overridden at queue time, so none are defined here.
+
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+  - stage: deploy
+    displayName: Build and Push Bundle
+    jobs:
+      - job: deploy
+        displayName: Build and Push Bundle
+        steps:
+          - checkout: self
+            clean: true
+          - task: NodeTool@0
+            displayName: Use Node 20
+            inputs:
+              versionSpec: '20.x'
+          - task: UsePythonVersion@0
+            displayName: Use Python 3.11
+            inputs:
+              versionSpec: '3.11'
+          - script: |
+              python -m pip install --upgrade pip
+              pip install vortex-cli
+              npm ci
+            displayName: Install vortex-cli and dependencies
+          - script: |
+              set -e
+              npm run typecheck
+              # optional pipeline variables override package.json; Azure leaves unset ones as the literal "$(name)"
+              case "$SERVER" in     '$('*) unset SERVER;;     esac
+              case "$APP_GROUP" in  '$('*) unset APP_GROUP;;  esac
+              case "$APP_NAME" in   '$('*) unset APP_NAME;;   esac
+              npm run deploy
+            displayName: npm run deploy (clone, build, push bundle.js + index)
+            env:
+              VORTEX_HOME: $(Build.SourcesDirectory)/ci-cd
+              BUILD_NUMBER: $(Build.BuildId)          # ends up in the bundle as __BUILD__.number
+              VORTEX_USERNAME: $(vortexUsername)
+              VORTEX_PASSWORD: $(vortexPassword)
+              SERVER: $(serverName)
+              APP_GROUP: $(appGroup)
+              APP_NAME: $(appName)

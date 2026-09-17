@@ -1,0 +1,37 @@
+# dependencies / build
+node_modules/
+dist/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+
+# per-machine
+.env
+.env.*
+
+# editors / OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+*:Zone.Identifier
+*.swp
+*.swo
+*~
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# never: vortex credentials or manifests
+servers.ini
+!ci-cd/config/servers.ini
+*.pma
+
+# ci-cd/ is the vortex workspace during a pipeline run: ignore what vortex creates there
+ci-cd/*.*/
+ci-cd/.lib/
+ci-cd/.lock
+ci-cd/*.lock
+ci-cd/config/.locks/
+
+# written by the build, read by deploy: the last build id
+.last-build
