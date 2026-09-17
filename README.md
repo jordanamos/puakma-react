@@ -1,5 +1,8 @@
 # puakma-react
 
+[![Build Status](https://dev.azure.com/amostj/puakma-react/_apis/build/status%2Fjordanamos.puakma-react?branchName=main)](https://dev.azure.com/amostj/puakma-react/_build/latest?definitionId=20&branchName=main)
+
+
 A React front end for a Puakma Tornado application: one esbuild bundle served as a RESOURCE,
 talking to a JSON ACTION. Two halves make a template:
 
