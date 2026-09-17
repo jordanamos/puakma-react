@@ -46,7 +46,10 @@ function findClone() {
 let appDir = findClone();
 if (!appDir) {
   console.log(`deploy: no clone of ${group}/${app} under ${home}; cloning from ${server}`);
-  vortex(["--yes", "clone", "--server", server, `${group}/${app}`]);
+  // --get-resources: without it, clone only fetches RESOURCEs whose extensions the server's
+  // `clone_with_resources` setting lists, and a fresh CI workspace has no such setting, so
+  // bundle.js would be missing from the manifest and push would find nothing to upload.
+  vortex(["--yes", "clone", "--get-resources", "--server", server, `${group}/${app}`]);
   appDir = findClone();
   if (!appDir) { console.error("deploy: clone did not produce a folder I can find; set APP_DIR"); process.exit(1); }
 }

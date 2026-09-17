@@ -4,10 +4,8 @@
   "private": true,
   "description": "React + esbuild front end for a Puakma Tornado app; the build writes bundle.js into the app clone's RESOURCE folder.",
   "puakma": {
-    "server": "<server>",
-    "app": "<group>/<app>",
-    "//": "The Puakma app this repo deploys to. Set both once (and rename this package), then `npm run deploy` (locally and in CI) does the rest.",
-    "// app": "group/name of the app you created by importing puakma/puakma-react-<version>.pmx in webdesign. Never an app id: ids change."
+    "server": "dev",
+    "app": "jordan/puakma-react"
   },
   "scripts": {
     "build": "node build.mjs",

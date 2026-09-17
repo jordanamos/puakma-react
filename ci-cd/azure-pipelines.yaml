@@ -48,7 +48,7 @@ stages:
               case "$APP_GROUP" in  '$('*) unset APP_GROUP;;  esac
               case "$APP_NAME" in   '$('*) unset APP_NAME;;   esac
               npm run deploy
-            displayName: npm run deploy (clone, build, push bundle.js + index)
+            displayName: npm run deploy (clone, build, push bundle.js, set ClientBuild)
             env:
               VORTEX_HOME: $(Build.SourcesDirectory)/ci-cd
               BUILD_NUMBER: $(Build.BuildId)          # ends up in the bundle as __BUILD__.number
