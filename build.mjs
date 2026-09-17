@@ -41,7 +41,19 @@ function locateClone() {
   return hits[0];
 }
 
-const OUT = resolve(APP_DIR, "RESOURCE/bundle.js.js");
+// The RESOURCE is the design element named "bundle.js"; vortex stores it locally as
+// bundle.js + an extension it derives from the content type via Python's mimetypes, which
+// differs between machines (.js here, .mjs or .es elsewhere). Write to whatever file the clone
+// has for that element, so push compares and uploads the file we actually built.
+const RES_DIR = resolve(APP_DIR, "RESOURCE");
+const existing = existsSync(RES_DIR)
+  ? readdirSync(RES_DIR).filter((f) => f === "bundle.js" || f.startsWith("bundle.js."))
+  : [];
+if (existing.length > 1) {
+  console.error(`build: more than one bundle.js* file in ${RES_DIR} (${existing.join(", ")}); remove the stale one`);
+  process.exit(1);
+}
+const OUT = resolve(RES_DIR, existing[0] ?? "bundle.js.js");
 
 // Build identity, injected as constants (see src/build.d.ts). esbuild itself keeps no build
 // number, so this is assembled here: package version, git short SHA, build time, and the CI
